@@ -1,35 +1,51 @@
 //define chunk sizes, timeouts, window sizes, retries, ports
 
-// func to ensure chunk is always smaller than buffer, make chunck smaller if timeout on
-// previous send
-package main
+package config
 
-func ChunkSize() {
-	//init as fixed value, maybe 1024 bytes
-	//decrement with failed packets
+import (
+	"time"
+)
+
+const (
+	DefaultChunkSize = 1024
+	MaxPacketSize    = 1200
+	InitialTimeout   = 500 * time.Millisecond
+	MaxRetries       = 5
+	AckWaitThreshold = 1000 * time.Millisecond
+	DefaultPort      = 9000
+)
+
+// Tunable parameters (you can mutate these during runtime)
+var (
+	CurrentChunkSize = DefaultChunkSize
+	CurrentTimeout   = InitialTimeout
+)
+
+// Reduce chunk size if previous packet failed
+func AdjustChunkSizeOnFailure() {
+	if CurrentChunkSize > 256 {
+		CurrentChunkSize -= 128
+	}
 }
 
-func Timeout() {
-	//init as fixed val
-	//increments with failed packets
+// Increase timeout if packet is slow to ACK
+func AdjustTimeoutOnFailure() {
+	CurrentTimeout += 200 * time.Millisecond
 }
 
-func Retry() {
-	//if prev packet fails (no ack after 500ms, what else?)
+// Reset parameters after successful ACK
+func ResetParameters() {
+	CurrentChunkSize = DefaultChunkSize
+	CurrentTimeout = InitialTimeout
 }
 
-func TimeAck() {
-	//time delay between packet send and ack response
+// Use in sender to decide if timeout exceeded
+func AcceptableWait(rtt time.Duration) bool {
+	return rtt <= AckWaitThreshold
 }
 
-func ReadChunk() {
-	//as titled
-}
-
-func AcceptableWait() {
-	//static set. if packets take longer, make smaller, increase wait time.
-}
-
+// Define ACK packet structure (can be reused across sender/receiver)
 type AckPacket struct {
 	AckedSeqNum uint32
+	WindowSize  uint16 // optional for flow control
 }

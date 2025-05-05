@@ -3,7 +3,7 @@ package main
 import "fmt"
 
 func main() {
-	fmt.Println("RUDP project initialized!")
+	fmt.Println("do this thing be working?")
 }
 
 // parse args, init config, call sender, receiver

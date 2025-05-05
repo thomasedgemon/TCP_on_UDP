@@ -1,7 +1,7 @@
 //implement checksum algo and apply to data chunk
 
 // use CRC32
-package main
+package checksum
 
 import (
 	"hash/crc32"

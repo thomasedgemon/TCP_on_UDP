@@ -14,5 +14,12 @@ package main
 //func to store chunk as they come in and map sequence number to chunk, for placement.
 map[unit32][]byte 
 
-
+//create checksum to send back to sender
 const PrevCheck = MakeChecksum(data)
+
+
+//wait for packet to come in
+buf := make([]byte, MaxPacketSize)
+n, addr, err := conn.ReadFromUDP(buf)
+
+

@@ -18,6 +18,9 @@ map[unit32][]byte
 const PrevCheck = MakeChecksum(data)
 
 
+const chunk = ReadChunk()
+
+
 //wait for packet to come in
 buf := make([]byte, MaxPacketSize)
 n, addr, err := conn.ReadFromUDP(buf)

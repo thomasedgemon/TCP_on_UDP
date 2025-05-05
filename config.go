@@ -27,7 +27,7 @@ func ReadChunk() {
 }
 
 func AcceptableWait() {
-	//static set. if response takes this time or less, maintain packet size, speed, etc
+	//static set. if packets take longer, make smaller, increase wait time.
 }
 
 type AckPacket struct {

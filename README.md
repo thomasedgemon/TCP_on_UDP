@@ -1,4 +1,4 @@
-This project concerns implement TCP-style semantics and functionality oveer UDP.
+This project concerns implementation of TCP-style semantics and functionality within UDP.
 
 Functionality to inherit:
 1.dynamic wait times, packet sizes implied from recipient buffer size, network congestion/stability. 

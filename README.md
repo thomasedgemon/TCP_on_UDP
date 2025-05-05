@@ -1,7 +1,8 @@
 This project concerns implementation of TCP-style semantics and functionality within UDP.
 
 Functionality to inherit:
-1.dynamic wait times, packet sizes implied from recipient buffer size, network congestion/stability. 
+1.dynamic wait times, packet sizes implied from recipient buffer size, network congestion/stability.
+<br>
 2. per-packet checksums
 3. Initial, final checksum comparisons
 4. In-order packet delivery
@@ -17,6 +18,7 @@ Why? This is just homework, man. *For the love of the Go Game*
 rough draft pseudocode:
 
 sender opens file in chunks.
+<br>
 sender checksums entire file.
 sender adds a squence number and checksum to each chunk.
 sender sends chunk

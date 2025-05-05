@@ -1,7 +1,7 @@
 **tcp-style stream semantics over udp.
 
 Transmission Control Protocol;
-tcp means 
+tcp means:
 -reliable delivery - checksum, hash sent and recieved, compare?
 -in-order delivery - don't send another packet until the previous is recieved. 
 -byte stream abstraction -- continuous flow rather than data chunks
@@ -14,4 +14,23 @@ basics of udp:
 -no handshake or session
 -no guarantee packet will arrive, arrive once, or arrive in order. 
 -each message is independent
+
+
+
+pseudocode:
+
+sender opens file in chunks.
+sender checksums entire file.
+sender adds a squence number and checksum to each chunk.
+sender sends chunk
+sender waits for ack from recipient before sending another chunk,
+  and takes flow, congestion control, recipient buffer size into consideration. 
+recipient sends ack for previous chunk 
+iterate until transmission is complete.
+WHAT IF A CHUNK FAILS?
+  -re-send that chunk 
+recipient correctly orders chunks 
+recipient generates checksum for entire file
+recipient sends checksum to sender
+transmission successful if checksum matches. 
 

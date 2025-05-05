@@ -1,6 +1,7 @@
 <h1>This project concerns implementation of TCP-style semantics and functionality within UDP.</h1>
 
 <p1>Functionality to inherit:</p1>
+<br>
 1.dynamic wait times, packet sizes implied from recipient buffer size, network congestion/stability.
 <br>
 2. per-packet checksums

@@ -20,9 +20,9 @@ for {
         SeqNum:      seqNum,
         Ack:         false,
         EOF:         isLastChunk,       
-        PayloadSize: uint16(len(chunk)),
+        PayloadSize: uint16(len(chunk)), //payload size: SenderChunk(prev size unless failed)
         Payload:     chunk,
-        Checksum:    CalculateChecksum(chunk),
+        Checksum:    MakeChecksum(chunk),
     }
 
     encoded := EncodePacket(pkt)

@@ -4,6 +4,12 @@
 // previous send
 package main
 
-const SenderChunk = RecipientBuffer //unless last transmission failed, then decrement.
+func ChunkSize() {
+	//init as fixed value, maybe 1024 bytes
+	//decrement with failed packets
+}
 
-//func to determine timeout. static unless last chunk failed
+func Timeout() {
+	//init as fixed val
+	//increments with failed packets
+}

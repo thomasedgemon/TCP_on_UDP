@@ -13,3 +13,6 @@ package main
 
 //func to store chunk as they come in and map sequence number to chunk, for placement.
 map[unit32][]byte 
+
+
+const PrevCheck = MakeChecksum(data)

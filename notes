@@ -1,0 +1,17 @@
+**tcp-style stream semantics over udp.
+
+Transmission Control Protocol;
+tcp means 
+-reliable delivery - checksum, hash sent and recieved, compare?
+-in-order delivery - don't send another packet until the previous is recieved. 
+-byte stream abstraction -- continuous flow rather than data chunks
+-flow control -- recipient tells sender how much buffer space it has. sender can
+-congestion control -- sender assumes nothing about network, then slowly increases data packet size until there's a loss. 
+-conn mgmt
+
+User Datagram Protocol
+basics of udp:
+-no handshake or session
+-no guarantee packet will arrive, arrive once, or arrive in order. 
+-each message is independent
+

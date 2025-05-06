@@ -3,6 +3,9 @@
 package config
 
 import (
+	"io"
+	"net"
+	"os"
 	"time"
 )
 
@@ -44,8 +47,33 @@ func AcceptableWait(rtt time.Duration) bool {
 	return rtt <= AckWaitThreshold
 }
 
-// Define ACK packet structure (can be reused across sender/receiver)
-type AckPacket struct {
-	AckedSeqNum uint32
-	WindowSize  uint16 // optional for flow control
+func ReadChunk(file *os.File, seqNum uint32) ([]byte, error) {
+	//offset pairs sequence number with the next file chunk to be read in
+	offset := int64(seqNum) * int64(config.CurrentChunkSize)
+	buffer := make([]byte, config.CurrentChunkSize)
+
+	_, err := file.Seek(offset, io.SeekStart)
+	if err != nil {
+		return nil, err
+	}
+
+	n, err := file.Read(buffer)
+	if err != nil && err != io.EOF {
+		return nil, err
+	}
+
+	return buffer[:n], err
+}
+
+func MakeChecksum() {
+	//logic
+}
+
+func sendAck(seqNum uint32, conn *net.UDPConn, addr *net.UDPAddr) {
+	ack := config.AckPacket{
+		AckedSeqNum: seqNum,
+		WindowSize:  0, // optional for now
+	}
+	encoded := config.EncodeAck(ack)
+	conn.WriteToUDP(encoded, addr)
 }

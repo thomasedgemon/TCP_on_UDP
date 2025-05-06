@@ -54,17 +54,14 @@ for {
             retries++
             continue
         }
-
         ack := DecodeAckPacket(buf[:n])
         if ack.AckedSeqNum == seqNum {
             //fmt.Printf("ACK received for chunk %d\n", seqNum)
             break
         }
-
         //fmt.Printf("Received unexpected ACK %d (expected %d)\n", ack.AckedSeqNum, seqNum)
         retries++
     }
-
     if retries == maxRetries {
         //fmt.Printf("Failed to send chunk %d after %d retries\n", seqNum, maxRetries)
         break

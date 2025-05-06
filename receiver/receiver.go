@@ -1,4 +1,4 @@
-package main
+package receiver
 
 import ("networking/config"
 		"networking/sender"
@@ -45,3 +45,6 @@ receivedChunks[received.SeqNum] = received.Payload
 
 sendAck(received.SeqNum, conn, addr)
 
+if received.EOF {
+	reassembleFile(receivedChunks)
+}

@@ -3,9 +3,12 @@
 package config
 
 import (
+	"hash/crc32"
 	"io"
 	"net"
+	"networking/packet"
 	"os"
+	"sort"
 	"time"
 )
 
@@ -49,8 +52,8 @@ func AcceptableWait(rtt time.Duration) bool {
 
 func ReadChunk(file *os.File, seqNum uint32) ([]byte, error) {
 	//offset pairs sequence number with the next file chunk to be read in
-	offset := int64(seqNum) * int64(config.CurrentChunkSize)
-	buffer := make([]byte, config.CurrentChunkSize)
+	offset := int64(seqNum) * int64(CurrentChunkSize)
+	buffer := make([]byte, CurrentChunkSize)
 
 	_, err := file.Seek(offset, io.SeekStart)
 	if err != nil {
@@ -65,15 +68,55 @@ func ReadChunk(file *os.File, seqNum uint32) ([]byte, error) {
 	return buffer[:n], err
 }
 
-func MakeChecksum() {
-	//logic
+func MakeChecksum(data []byte) uint32 {
+	return crc32.ChecksumIEEE(data)
 }
 
 func sendAck(seqNum uint32, conn *net.UDPConn, addr *net.UDPAddr) {
-	ack := config.AckPacket{
+	ack := packet.AckPacket{
 		AckedSeqNum: seqNum,
-		WindowSize:  0, // optional for now
+		WindowSize:  0,
 	}
-	encoded := config.EncodeAck(ack)
+	encoded := EncodeAck(ack)
 	conn.WriteToUDP(encoded, addr)
+}
+
+func reassembleFile(chunks map[uint32][]byte) {
+	//open file to write to
+	outFile, err := os.Create("output.txt")
+	if err != nil {
+		panic("failed to create output file:" + err.Error())
+	}
+	defer outFile.Close()
+	//make sorted list of sequence numbers
+	var seqNums []int
+	for seq := range chunks {
+		seqNums = append(seqNums, int(seq))
+	}
+	sort.Ints(seqNums)
+
+	//write the chunks in order to the file
+	for _, seq := range seqNums {
+		_, err := outFile.Write(chunks[unit32](seq))
+		if err != nil {
+			panic("failed to write a chunk:" + err.Error())
+		}
+	}
+	println("file reassembled.")
+}
+
+func computeFinalChecksum(filename string) uint32 {
+	f, err := os.Open(filename)
+	if err != nil {
+		panic(err)
+	}
+	defer f.Close()
+
+	hasher := crc32.NewIEEE()
+	_, err = io.Copy(hasher, f)
+	if err != nil {
+		panic(err)
+	}
+
+	return hasher.Sum32()
 }

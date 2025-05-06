@@ -2,11 +2,9 @@ package main
 
 import (
 	"fmt"
+	"networking/config"
+	"networking/packet"
 	"os"
-	"net"
-	"time"
-	config,
-	packet
 )
 
 func main() {

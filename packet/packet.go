@@ -19,7 +19,7 @@ func EncodePacket(pkt Packet) []byte {
 	binary.BigEndian.PutUint32(header[0:4], pkt.SeqNum)
 	//define headers based on the type of packet being sent
 	if pkt.EOF {
-		header[5] = 1
+		header[8] = 1
 	} else {
 		header[4] = 0
 	}

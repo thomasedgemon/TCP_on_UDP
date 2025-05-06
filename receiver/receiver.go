@@ -1,7 +1,10 @@
 package receiver
 
-import ("networking/config"
-		"networking/sender"
+import (
+	"fmt"
+	"networking/config"
+	"networking/packet"
+	"networking/sender"
 )
 
 //get, validate, ack packets
@@ -12,39 +15,34 @@ import ("networking/config"
 //list or set to maintain recordkeeping of already-received chunks
 //func to send ACKs back to sender
 
-
 //func to store chunk as they come in and map sequence number to chunk, for placement.
-var receivedChunks = make(map[unit32][]byte) 
 
-//create checksum to send back to sender
-const PrevCheck = MakeChecksum(data)
+func GetData() {
+	var receivedChunks = make(map[uint32][]byte)
 
+	//wait for packet to come in
+	buf := make([]byte, sender.MaxPacketSize)
+	n, addr, err := conn.ReadFromUDP(buf)
 
-const chunk = ReadChunk()
+	//in this line, "packet." refers to the file that function lives in.
+	received := packet.DecodePacket(buf[:n])
 
+	if received.Checksum != config.MakeChecksum(received.Payload) {
+		fmt.Println("Checksum mismatch — discarding packet")
+		return // skip storing or ACKing
+	}
+	if _, exists := receivedChunks[received.SeqNum]; exists {
+		fmt.Println("Duplicate packet — re-ACKing")
+		// Still send an ACK for reliability
+		config.sendAck(received.SeqNum, conn, addr)
+		return
+	}
 
-//wait for packet to come in
-buf := make([]byte, MaxPacketSize)
-n, addr, err := conn.ReadFromUDP(buf)
+	receivedChunks[received.SeqNum] = received.Payload
 
-//in this line, "packet." refers to the file that function lives in. 
-received := packet.DecodePacket(buf[:n])
-
-if received.Checksum != checksum.MakeChecksum(received.Payload) {
-	fmt.Println("Checksum mismatch — discarding packet")
-	return // skip storing or ACKing
-}
-if _, exists := receivedChunks[received.SeqNum]; exists {
-	fmt.Println("Duplicate packet — re-ACKing")
-	// Still send an ACK for reliability
 	sendAck(received.SeqNum, conn, addr)
-	return
-}
 
-receivedChunks[received.SeqNum] = received.Payload
-
-sendAck(received.SeqNum, conn, addr)
-
-if received.EOF {
-	reassembleFile(receivedChunks)
+	if received.EOF {
+		reassembleFile(receivedChunks)
+	}
 }

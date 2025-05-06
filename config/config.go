@@ -3,6 +3,7 @@
 package config
 
 import (
+	"encoding/binary"
 	"hash/crc32"
 	"io"
 	"net"
@@ -72,6 +73,13 @@ func MakeChecksum(data []byte) uint32 {
 	return crc32.ChecksumIEEE(data)
 }
 
+func EncodeAck(ack AckPacket) []byte {
+	buf := make([]byte, 6)
+	binary.BigEndian.PutUint32(buf[0:4], ack.AckedSeqNum)
+	binary.BigEndian.PutUint16(buf[4:6], ack.WindowSize)
+	return buf
+}
+
 func sendAck(seqNum uint32, conn *net.UDPConn, addr *net.UDPAddr) {
 	ack := packet.AckPacket{
 		AckedSeqNum: seqNum,
@@ -97,7 +105,7 @@ func reassembleFile(chunks map[uint32][]byte) {
 
 	//write the chunks in order to the file
 	for _, seq := range seqNums {
-		_, err := outFile.Write(chunks[unit32](seq))
+		_, err := outFile.Write(chunks[uint32](seq))
 		if err != nil {
 			panic("failed to write a chunk:" + err.Error())
 		}
@@ -119,4 +127,13 @@ func computeFinalChecksum(filename string) uint32 {
 	}
 
 	return hasher.Sum32()
+}
+
+func DecodeAckPacket(seqNum uint32, conn *net.UDPConn, addr *net.UDPAddr) {
+
+	//logic
+}
+
+func isLastChunk() {
+	//logic
 }

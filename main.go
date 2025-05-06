@@ -1,5 +1,8 @@
 package main
 
+// parse args, init config, call sender, receiver
+//handle high level debugging, logging, and exit conditions
+
 import (
 	"fmt"
 	"networking/config"
@@ -34,6 +37,3 @@ func main() {
 
 	fmt.Printf("Encoded packet: %x\n", encoded) // Just for testing
 }
-
-// parse args, init config, call sender, receiver
-//handle high level debugging, logging, and exit conditions

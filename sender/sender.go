@@ -12,16 +12,11 @@ import (
 	"time"
 )
 
-var seqNum uint32 = 0
-
-const MaxRetries int = 5
-const MaxPacketSize int = 1200
-
-//no way to know recipients buffer size. assume x, then decrement if
-//theres a failure.
-
 // all executable logic must be inside a function!!
 func sendFile() {
+	var seqNum uint32 = 0
+	const MaxRetries int = 5
+	const MaxPacketSize int = 1200
 	for {
 		chunk, err := config.ReadChunk(file, seqNum)
 		if err == io.EOF {
